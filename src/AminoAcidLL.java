@@ -5,9 +5,7 @@ class AminoAcidLL{
   AminoAcidLL next;
 
   AminoAcidLL(){
-
   }
-
 
   /********************************************************************************************/
   /* Creates a new node, with a given amino acid/codon 
@@ -21,6 +19,7 @@ class AminoAcidLL{
       if(codons[i].equals(inCodon))
         counts[i]++;
     }
+    this.next = null;
   }
 
   /********************************************************************************************/
@@ -30,17 +29,20 @@ class AminoAcidLL{
    * If there is no next node, add a new node to the list that would contain the codon. 
    */
   private void addCodon(String inCodon){
+    if(this.aminoAcid == AminoAcidResources.getAminoAcidFromCodon(inCodon)) {
+      for (int i = 0; i < this.codons.length; i++) {
+        if (inCodon.equals(this.codons[i])) {
+          this.counts[i]++;
+          return;
+        }
+      }
+    }
+
     if(this.next == null){
       this.next = new AminoAcidLL(inCodon);
       return;
     }
 
-    for (int i = 0; i < this.codons.length; i++) {
-      if(inCodon.equals(this.codons[i])){
-        this.counts[i]++;
-        return;
-      }
-    }
     this.next.addCodon(inCodon);
   }
 
@@ -78,7 +80,19 @@ class AminoAcidLL{
   /* Recursive method that finds the differences in **Amino Acid** counts. 
    * the list *must* be sorted to use this method */
   public int aminoAcidCompare(AminoAcidLL inList){
-    return 0;
+    if(this.next == null && inList.next == null){
+      return this.totalCount() - inList.totalCount();
+    }
+
+    if(this.next == null){
+        return -inList.totalCount() + this.aminoAcidCompare(inList.next);
+    }
+
+    if(inList.next == null){
+        return this.totalCount() + this.next.aminoAcidCompare(inList);
+    }
+
+    return Math.abs((this.totalCount() - inList.totalCount()) + (this.next.aminoAcidCompare(inList.next)));
   }
 
   /********************************************************************************************/
@@ -92,6 +106,21 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
   public char[] aminoAcidList(){
+    String amino = "";
+    while(this.next != null){
+      amino += aminoAcid;
+      this.next = this.next.next;
+    }
+
+    char[] chars = new char[amino.length()];
+
+
+
+    if(this.next == null){
+      //////haz un loop con un string para hacerlo un char[]
+      return new char[] {aminoAcid};
+    }
+
     return new char[]{};
   }
 
@@ -105,7 +134,7 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* recursively determines if a linked list is sorted or not */
   public boolean isSorted(){
-    return false;
+    return true;
   }
 
 
