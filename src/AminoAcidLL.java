@@ -51,7 +51,7 @@ class AminoAcidLL{
   /* Shortcut to find the total number of instances of this amino acid */
   private int totalCount(){
     int totalCount = 0;
-    for (int i = 0; i < this.counts.length; i++) {
+    for(int i = 0; i < this.counts.length; i++) {
       totalCount += this.counts[i];
     }
     return totalCount;
@@ -85,7 +85,7 @@ class AminoAcidLL{
     }
 
     if(this.next == null){
-        return -inList.totalCount() + this.aminoAcidCompare(inList.next);
+        return inList.totalCount() + this.aminoAcidCompare(inList.next);
     }
 
     if(inList.next == null){
@@ -106,27 +106,39 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
   public char[] aminoAcidList(){
-    String amino = "";
-    while(this.next != null){
-      amino += aminoAcid;
-      this.next = this.next.next;
-    }
 
-    char[] chars = new char[amino.length()];
+    if(this.next == null)
+      return new char[] {this.aminoAcid};
 
+    char[] aminos = {this.aminoAcid};
 
+    return mergeArrays(aminos, this.next.aminoAcidList());
 
+    /*
+    AminoAcidLL head = this;
+
+    int count = 0;
     if(this.next == null){
-      //////haz un loop con un string para hacerlo un char[]
-      return new char[] {aminoAcid};
+      for(AminoAcidLL i = this; i != null; i = head.next){
+        count++;
+      }
+      char[] aminos = new char[count];
+      count = 0;
+      for(AminoAcidLL j = this; j != null; j = head.next){
+        aminos[count] = j.aminoAcid;
+        count++;
+      }
+      return aminos;
     }
 
-    return new char[]{};
-  }
+    return head.next.aminoAcidList();
+    */}
 
   /********************************************************************************************/
   /* Recursively returns the total counts of amino acids in the order that they are in in the linked list. */
   public int[] aminoAcidCounts(){
+
+
     return new int[]{};
   }
 
@@ -134,20 +146,112 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* recursively determines if a linked list is sorted or not */
   public boolean isSorted(){
-    return true;
+    //If there is nothing after the current node, that means, this is the end of the list
+    if(this.next == null)
+      return true;
+
+    //If the current amino acid is greater than the next one (comes next alphabetically), it is not in sorted.
+    if(this.aminoAcid > this.next.aminoAcid)
+        return false;
+
+    return this.next.isSorted();
   }
 
 
   /********************************************************************************************/
   /* Static method for generating a linked list from an RNA sequence */
   public static AminoAcidLL createFromRNASequence(String inSequence){
-    return null;
+    if(inSequence.length() < 3)
+      return null;
+
+    AminoAcidLL aminoList = null;
+    while(inSequence.length() > 2 && AminoAcidResources.getAminoAcidFromCodon(inSequence.substring(0,3)) != '*'){
+      if(aminoList == null) {
+        aminoList = new AminoAcidLL(inSequence.substring(0,3));
+      }
+
+      else{
+        aminoList.addCodon(inSequence.substring(0,3));
+      }
+
+      inSequence = inSequence.substring(3);
+
+    }
+
+
+    return aminoList;
   }
 
 
   /********************************************************************************************/
   /* sorts a list by amino acid character*/
   public static AminoAcidLL sort(AminoAcidLL inList){
-    return null;
+
+    //if list is empty or there is only one node in the list, there is nothing to sort
+    if(inList == null || inList.next == null)
+      return inList;
+
+    AminoAcidLL head = inList;
+    AminoAcidLL headPrevious = inList;
+    AminoAcidLL temp;
+    AminoAcidLL min;
+    AminoAcidLL minPrevious;
+
+    while(head.next != null){
+      min = head;
+      minPrevious = min;
+      temp = head.next;
+      //looks for the first amino acid in alphabetical order, starting from the head
+      while(temp != null){
+        if (temp.aminoAcid < min.aminoAcid)
+          min = temp;
+        temp = temp.next;
+      }
+
+      //this if is used in case the head is already the first amino acid in the list, we continue to the next iteration
+      if(minPrevious == min) {
+        head = head.next;
+        continue;
+      }
+
+      //find the position of the node before the node that will be moved
+      while(minPrevious.next != min){
+        minPrevious = minPrevious.next;
+      }
+
+
+        minPrevious.next = min.next;
+        min.next = head;
+
+        if (headPrevious != head)
+          headPrevious.next = min;
+
+      headPrevious = min;
+    }
+
+    //returns list
+    return inList;
+  }
+
+
+
+
+
+
+
+//**********************************************************************
+  private char[] mergeArrays(char[] a, char[] b) {
+    char[] c = new char[a.length + b.length];
+    for(int i = 0; i < a.length; i++){
+      c[i] = a[i];
+    }
+    int j = 0;
+    for (int i = a.length; i < c.length; i++) {
+      c[i] = b[j];
+      j++;
+    }
+
+    return c;
   }
 }
+
