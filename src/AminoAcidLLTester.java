@@ -29,6 +29,16 @@ public class AminoAcidLLTester {
 
     }
 
+
+    @Test
+    public void codonCompareTester1(){
+        AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUGCUACGGAGCUUCGGAGCGCUGCUCUUUAG");
+        AminoAcidLL newList2 = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCUAG");
+        System.out.println(newList.codonCompare(newList2));
+
+    }
+
+
     @Test
     public void aminoAcidListTester1(){
         AminoAcidLL node1 = new AminoAcidLL("GCU");
@@ -37,15 +47,22 @@ public class AminoAcidLLTester {
         node1.next = node2;
         node2.next = node3;
 
-        char[] bla = node1.aminoAcidList();
-        for(int i = 0; i < bla.length; i++){
-            System.out.println(bla[i]);
+        char[] aminos = node1.aminoAcidList();
+        for(int i = 0; i < aminos.length; i++){
+            System.out.println(aminos[i]);
+        }
+    }
+
+    @Test
+    public void aminoAcidCountsTester1(){
+        AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUGCUACGGAGCUUCGGAGCGCUGCUCUUUAG");
+        int[] count = newList.aminoAcidCounts();
+        for(int i = 0; i < count.length; i++){
+            System.out.println(count[i]);
         }
 
 
-
     }
-
 
 
 

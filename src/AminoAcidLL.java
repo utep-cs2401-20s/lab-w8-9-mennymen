@@ -80,26 +80,43 @@ class AminoAcidLL{
   /* Recursive method that finds the differences in **Amino Acid** counts. 
    * the list *must* be sorted to use this method */
   public int aminoAcidCompare(AminoAcidLL inList){
+
+    ////////checa varios casos mas, creo que hay que cambiar poquito
+
+    //If we reached the end of both lists, return the difference in amino acid counts for the last node
     if(this.next == null && inList.next == null){
       return this.totalCount() - inList.totalCount();
     }
 
+    //If the list we're comparing with inList reached the end, it will only keep counting the amino acids from inLists' next nodes
     if(this.next == null){
         return inList.totalCount() + this.aminoAcidCompare(inList.next);
     }
 
+    //If inList reached the end, it will only keep counting the amino acids from the other list
     if(inList.next == null){
         return this.totalCount() + this.next.aminoAcidCompare(inList);
     }
 
-    return Math.abs((this.totalCount() - inList.totalCount()) + (this.next.aminoAcidCompare(inList.next)));
+    return this.totalDiff(inList) + (this.next.aminoAcidCompare(inList.next));
   }
 
   /********************************************************************************************/
   /* Same ad above, but counts the codon usage differences
    * Must be sorted. */
   public int codonCompare(AminoAcidLL inList){
-    return 0;
+    if(this.next == null && inList.next == null)
+      return codonDiff(inList);
+
+    if(this.next == null){
+      return inList.totalCount() + this.codonCompare(inList.next);
+    }
+
+    if(inList.next == null){
+      return this.totalCount() + this.next.codonCompare(inList);
+    }
+
+    return this.totalDiff(inList) + this.next.codonCompare(inList.next);
   }
 
 
@@ -112,7 +129,7 @@ class AminoAcidLL{
 
     char[] aminos = {this.aminoAcid};
 
-    return mergeArrays(aminos, this.next.aminoAcidList());
+    return mergeCharArrays(aminos, this.next.aminoAcidList());
 
     /*
     AminoAcidLL head = this;
@@ -138,8 +155,12 @@ class AminoAcidLL{
   /* Recursively returns the total counts of amino acids in the order that they are in in the linked list. */
   public int[] aminoAcidCounts(){
 
+    if(this.next == null)
+      return new int[] {this.totalCount()};
 
-    return new int[]{};
+    int[] counts = {this.totalCount()};
+
+    return mergeIntArrays(counts, this.next.aminoAcidCounts());
   }
 
 
@@ -240,7 +261,8 @@ class AminoAcidLL{
 
 
 //**********************************************************************
-  private char[] mergeArrays(char[] a, char[] b) {
+  //Helper methods to merge char and int arrays
+  private char[] mergeCharArrays(char[] a, char[] b) {
     char[] c = new char[a.length + b.length];
     for(int i = 0; i < a.length; i++){
       c[i] = a[i];
@@ -253,5 +275,22 @@ class AminoAcidLL{
 
     return c;
   }
+
+
+  private int[] mergeIntArrays(int[] a, int[] b) {
+    int[] c = new int[a.length + b.length];
+    for(int i = 0; i < a.length; i++){
+      c[i] = a[i];
+    }
+    int j = 0;
+    for (int i = a.length; i < c.length; i++) {
+      c[i] = b[j];
+      j++;
+    }
+
+    return c;
+  }
+
+
 }
 
