@@ -51,9 +51,9 @@ public class AminoAcidLLTester {
 
     /*
      * Test to verify if the aminoAcidCompare method works properly and outputs the difference in amino acids between two lists
-     * Input (lists compared): 1st list = A -> T -> E   2nd List = L -> T -> A -> E
-     * Expected output: 1 as list 1 has 3 amino acids and the second one has 4, there is a difference of only 1
-     * Output: 1
+     * Input (lists compared): 1st list = A -> T   2nd List = L -> T -> A -> E
+     * Expected output: 2 as list 1 has 2 amino acids and the second one has 4, there is a difference of only 1
+     * Output: 2
      * Test passed, meaning that the method does compare the number of amino acids the way it is supposed to
      * This test was done to make sure that the method does compare the number of amino acids appropriately when the second list has a larger number of amino acids
      */
@@ -62,9 +62,7 @@ public class AminoAcidLLTester {
 
         AminoAcidLL node1 = new AminoAcidLL("GCU");
         AminoAcidLL node2 = new AminoAcidLL("ACG");
-        AminoAcidLL node3 = new AminoAcidLL("GAG");
         node1.next = node2;
-        node2.next = node3;
 
         AminoAcidLL node4 = new AminoAcidLL("CUU");
         AminoAcidLL node5 = new AminoAcidLL("ACG");
@@ -75,7 +73,6 @@ public class AminoAcidLLTester {
         node6.next = node7;
 
         System.out.println(node1.aminoAcidCompare(node4));
-
     }
 
 
@@ -139,11 +136,6 @@ public class AminoAcidLLTester {
         for(int i = 0; i < count.length; i++){
             System.out.println(count[i]);
         }
-
-        while(newList != null){
-            System.out.println(newList.aminoAcid);
-            newList = newList.next;
-        }
     }
 
 
@@ -165,8 +157,11 @@ public class AminoAcidLLTester {
         node1.next = node2;
         node2.next = node3;
         System.out.println(node1.isSorted());
-
     }
+
+
+
+
 
     /*
      * Test to verify if the isSorted method works properly and outputs if the input list is in alphabetical order in respect to their amino acids
@@ -181,6 +176,9 @@ public class AminoAcidLLTester {
         AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUGAGCUUCGGAGCACGUAG");
         System.out.println(newList.isSorted());
     }
+
+
+
 
 
 
@@ -200,6 +198,7 @@ public class AminoAcidLLTester {
             newList = newList.next;
         }
     }
+
 
 
 
