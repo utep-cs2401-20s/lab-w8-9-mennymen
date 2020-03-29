@@ -81,8 +81,6 @@ class AminoAcidLL{
    * the list *must* be sorted to use this method */
   public int aminoAcidCompare(AminoAcidLL inList){
 
-    ////////checa varios casos mas, creo que hay que cambiar poquito
-
     //If we reached the end of both lists, return the difference in amino acid counts for the last node
     if(this.next == null && inList.next == null){
       return this.totalCount() - inList.totalCount();
