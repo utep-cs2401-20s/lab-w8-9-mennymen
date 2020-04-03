@@ -102,19 +102,38 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* Same ad above, but counts the codon usage differences
    * Must be sorted. */
+
   public int codonCompare(AminoAcidLL inList){
+    //If both lists are empty, return 0
+    if(this == null && inList == null)
+      return 0;
+
+    //When both lists are at their last node, return their codon difference
     if(this.next == null && inList.next == null)
       return codonDiff(inList);
 
-    if(this.next == null){
-      return inList.totalCount() + this.codonCompare(inList.next);
-    }
+    //If we're at this list's last node, for now, we'll just count inList's counts
+    if(this.next == null)
+      return -inList.totalCount() + this.codonCompare(inList.next);
 
-    if(inList.next == null){
+
+    //If we're at inList's last node, for now, we'll just count this list's counts
+    if(inList.next == null)
       return this.totalCount() + this.next.codonCompare(inList);
-    }
 
-    return this.totalDiff(inList) + this.next.codonCompare(inList.next);
+    //If this list's current amino acid comes before (alphabetically) than inList's
+    //count all amino acid instances for this list and move to this list's next node
+    if(this.aminoAcid < inList.aminoAcid)
+      return this.totalCount() + this.next.codonCompare(inList);
+
+    //If inList's current amino acid comes before (alphabetically) than this list's
+    //count all amino acid instances for inList and move to inList's next node
+    if(this.aminoAcid > inList.aminoAcid)
+      return -inList.totalCount() + this.codonCompare(inList.next);
+
+    //When both lists are on the same codon, return the difference using codonDiff
+    return this.codonDiff(inList) + this.next.codonCompare(inList.next);
+
   }
 
 
@@ -122,57 +141,46 @@ class AminoAcidLL{
   /* Recursively returns the total list of amino acids in the order that they are in in the linked list. */
   public char[] aminoAcidList(){
 
+    //Base case: if we are at the last node of the list, return a char array with the amino acid of this node
     if(this.next == null)
       return new char[] {this.aminoAcid};
 
+    //Create an array with this node's amino acid
     char[] aminos = {this.aminoAcid};
 
+    //Recursive call where I use the helper method I created to merge arrays, merging the current array
+    //which contains the current node's amino acid, and calls the the method with the next node
     return mergeCharArrays(aminos, this.next.aminoAcidList());
-
-    /*
-    AminoAcidLL head = this;
-
-    int count = 0;
-    if(this.next == null){
-      for(AminoAcidLL i = this; i != null; i = head.next){
-        count++;
-      }
-      char[] aminos = new char[count];
-      count = 0;
-      for(AminoAcidLL j = this; j != null; j = head.next){
-        aminos[count] = j.aminoAcid;
-        count++;
-      }
-      return aminos;
-    }
-
-    return head.next.aminoAcidList();
-    */}
+   }
 
   /********************************************************************************************/
   /* Recursively returns the total counts of amino acids in the order that they are in in the linked list. */
   public int[] aminoAcidCounts(){
 
+    //Base case: if we are at the last node of the list, return an int array with the total count of this node
     if(this.next == null)
       return new int[] {this.totalCount()};
 
+    //Create an array with this node's total amino acid count
     int[] counts = {this.totalCount()};
 
+    //Recursive call where I use the helper method I created to merge arrays, merging the current array
+    //which contains the current node's amino acid count, and calls the the method with the next node
     return mergeIntArrays(counts, this.next.aminoAcidCounts());
   }
-
 
   /********************************************************************************************/
   /* recursively determines if a linked list is sorted or not */
   public boolean isSorted(){
-    //If there is nothing after the current node, that means, this is the end of the list
+    //Base case: If there is nothing after the current node, that means, this is the end of the list
     if(this.next == null)
       return true;
 
-    //If the current amino acid is greater than the next one (comes next alphabetically), it is not in sorted.
+    //If the current amino acid is greater than the next one (comes next alphabetically), it is not in sorted and returns false.
     if(this.aminoAcid > this.next.aminoAcid)
         return false;
 
+    //Recursive call: call method with next node
     return this.next.isSorted();
   }
 
@@ -180,27 +188,29 @@ class AminoAcidLL{
   /********************************************************************************************/
   /* Static method for generating a linked list from an RNA sequence */
   public static AminoAcidLL createFromRNASequence(String inSequence){
+    //If the input string's length is less than 3, return null, as it is not possible to read it.
     if(inSequence.length() < 3)
       return null;
 
+    //Crete a new list, and read the string by substrings of 3
     AminoAcidLL aminoList = null;
     while(inSequence.length() > 2 && AminoAcidResources.getAminoAcidFromCodon(inSequence.substring(0,3)) != '*'){
+      //Create the first node
       if(aminoList == null) {
         aminoList = new AminoAcidLL(inSequence.substring(0,3));
       }
 
+      //Add codon from the substring
       else{
         aminoList.addCodon(inSequence.substring(0,3));
       }
 
+      //Update string as we already read the first 3 letters of the string
       inSequence = inSequence.substring(3);
-
     }
-
 
     return aminoList;
   }
-
 
   /********************************************************************************************/
   /* sorts a list by amino acid character*/
@@ -220,7 +230,7 @@ class AminoAcidLL{
       min = head;
       minPrevious = min;
       temp = head.next;
-      //looks for the first amino acid in alphabetical order, starting from the head
+      //Looks for the first amino acid in alphabetical order, starting from the head
       while(temp != null){
         if (temp.aminoAcid < min.aminoAcid)
           min = temp;
@@ -238,7 +248,6 @@ class AminoAcidLL{
         minPrevious = minPrevious.next;
       }
 
-
         minPrevious.next = min.next;
         min.next = head;
 
@@ -247,14 +256,8 @@ class AminoAcidLL{
 
       headPrevious = min;
     }
-
-    //returns list
     return inList;
   }
-
-
-
-
 
 
 
@@ -270,10 +273,8 @@ class AminoAcidLL{
       c[i] = b[j];
       j++;
     }
-
     return c;
   }
-
 
   private int[] mergeIntArrays(int[] a, int[] b) {
     int[] c = new int[a.length + b.length];
@@ -285,10 +286,6 @@ class AminoAcidLL{
       c[i] = b[j];
       j++;
     }
-
     return c;
   }
-
-
 }
-

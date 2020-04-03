@@ -1,27 +1,9 @@
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AminoAcidLLTester {
 
 //**NOTE: These tests are in the order the methods are in the AminoAcidLL.java file, but were not done in this order, that is why in some of them, other methods are used
-
-
-    /*
-    * Test to verify if the constructor works properly when given codons as input
-    * Input (codons): GCU (1st node), ACG (2nd node)
-    * Expected output: A list with two nodes with the amino acids A and T (respectively)
-    * Output: A -> T
-    * Test passed, meaning that the method creates nodes the way it is supposed to
-    * This test was done to make sure that the constructor method for this class works properly
-    */
-    @Test
-    public void AminoAcidTester1(){
-        AminoAcidLL AALL = new AminoAcidLL("GCU");
-        AALL.next = new AminoAcidLL("ACG");
-        System.out.println(AALL.aminoAcid + " " + AALL.next.aminoAcid + " " );
-    }
-
-
 
     /*
     * Test to verify if the aminoAcidCompare method works properly and outputs the difference in amino acids between two lists
@@ -43,7 +25,7 @@ public class AminoAcidLLTester {
         AminoAcidLL node4 = new AminoAcidLL("GCU");
         node4.next = new AminoAcidLL("ACG");
 
-        System.out.println(node1.aminoAcidCompare(node4));
+        assertEquals(node1.aminoAcidCompare(node4), 1);
 
     }
 
@@ -61,8 +43,7 @@ public class AminoAcidLLTester {
     public void aminoAcidCompareTester2(){
 
         AminoAcidLL node1 = new AminoAcidLL("GCU");
-        AminoAcidLL node2 = new AminoAcidLL("ACG");
-        node1.next = node2;
+        node1.next = new AminoAcidLL("ACG");
 
         AminoAcidLL node4 = new AminoAcidLL("CUU");
         AminoAcidLL node5 = new AminoAcidLL("ACG");
@@ -72,7 +53,7 @@ public class AminoAcidLLTester {
         node5.next = node6;
         node6.next = node7;
 
-        System.out.println(node1.aminoAcidCompare(node4));
+        assertEquals(node1.aminoAcidCompare(node4), 2);
     }
 
 
@@ -80,17 +61,20 @@ public class AminoAcidLLTester {
 
     /*
      * Test to verify if the codonCompare method works properly and outputs the difference in codons between two lists
-     * Input (lists compared): 1st list contains 10 codons   2nd List contains 6 codons
-     * Expected output: 4 as list 1 has 10 codons the second one has 6, there is a difference of 4 codons
-     * Output: 4
+     * Input (lists compared): 1st list contains 12 codons ([3,1] -> [1,1] -> [1] -> [1] -> [1] -> [1] -> [1])   2nd List contains 6 codons ([1] -> [1] -> [1] -> [1] -> [1] -> [1])
+     * Expected output: 6 as list 1 has 12 codons the second one has 6, there is an overall difference of 6 codons
+     * Output: 6
      * Test passed, meaning that the method does compare the number of codons the way it is supposed to
      * This test was done to make sure that the method does compare the number of codons appropriately
      */
     @Test
     public void codonCompareTester1(){
-        AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUGCUACGGAGCUUCGGAGCGCUGCUCUUUAG");
-        AminoAcidLL newList2 = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCUAG");
+        AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUGCCGAGUUUCUUCGGAGCGCUGCUCUUACGGAAUAG");
+        AminoAcidLL newList2 = AminoAcidLL.createFromRNASequence("GCUGAGCUUCGGAGCACGUAG");
+
+        assert newList != null;
         System.out.println(newList.codonCompare(newList2));
+        assertEquals(newList.codonCompare(newList2), 6);
     }
 
 
@@ -113,9 +97,7 @@ public class AminoAcidLLTester {
         node2.next = node3;
 
         char[] aminos = node1.aminoAcidList();
-        for(int i = 0; i < aminos.length; i++){
-            System.out.println(aminos[i]);
-        }
+        assertArrayEquals(aminos, new char[] {'A','T', 'E'});
     }
 
 
@@ -132,10 +114,9 @@ public class AminoAcidLLTester {
     @Test
     public void aminoAcidCountsTester1(){
         AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUGCUACGGAGCUUCGGAGCGCUGCUCUUUAG");
+        assert newList != null;
         int[] count = newList.aminoAcidCounts();
-        for(int i = 0; i < count.length; i++){
-            System.out.println(count[i]);
-        }
+        assertArrayEquals(count, new int[] {4,1,1,2,1,1});
     }
 
 
@@ -156,10 +137,9 @@ public class AminoAcidLLTester {
         AminoAcidLL node3 = new AminoAcidLL("GAG");
         node1.next = node2;
         node2.next = node3;
-        System.out.println(node1.isSorted());
+
+        assertFalse(node1.isSorted());
     }
-
-
 
 
 
@@ -174,7 +154,9 @@ public class AminoAcidLLTester {
     @Test
     public void isSortedTester2(){
         AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUGAGCUUCGGAGCACGUAG");
-        System.out.println(newList.isSorted());
+
+        assert newList != null;
+        assertTrue(newList.isSorted());
     }
 
 
@@ -193,15 +175,39 @@ public class AminoAcidLLTester {
     @Test
     public void createFromRNASequenceTester1(){
         AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCUAG");
-        while(newList != null) {
-            System.out.println(newList.aminoAcid);
-            newList = newList.next;
-        }
+
+        assert newList != null;
+        assertEquals(newList.aminoAcid, 'A');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'T');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'E');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'L');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'R');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'S');
+
     }
 
 
+    /*
+     * Test to verify if the createFromRNASequence method works properly and does stop when it reads a STOP sequence and ignores the rest of the string
+     * Input: "GCUUAGACGGAGCUUCGGAGC"
+     * Expected output: A
+     * Output: A
+     * Test passed, meaning that the method does create a list from the input RNA sequence as intended and stopped when it read UAG
+     * This test was done to make sure that the method does create a list with the respective amino acids
+     */
+    @Test
+    public void createFromRNASequenceTester2(){
+        AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUUAGACGGAGCUUCGGAGC");
+        assert newList != null;
+        assertEquals(newList.aminoAcid, 'A');
+        assertNull(newList.next);
 
-
+    }
 
 
     /*
@@ -215,16 +221,20 @@ public class AminoAcidLLTester {
     @Test
     public void sortTester1(){
         AminoAcidLL newList = AminoAcidLL.createFromRNASequence("GCUACGGAGCUUCGGAGCUAG");
-        AminoAcidLL head = newList;
-        while(head != null) {
-            System.out.print(head.aminoAcid + " ");
-            head = head.next;
-        }
-        System.out.println("");
+
         AminoAcidLL.sort(newList);
-        while(newList != null) {
-            System.out.print(newList.aminoAcid + " ");
-            newList = newList.next;
-        }
+        assert newList != null;
+        assertEquals(newList.aminoAcid, 'A');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'E');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'L');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'R');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'S');
+        newList = newList.next;
+        assertEquals(newList.aminoAcid, 'T');
+
     }
 }
